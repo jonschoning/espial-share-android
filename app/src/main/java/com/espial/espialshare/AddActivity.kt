@@ -1,6 +1,7 @@
 package com.espial.espialshare
 
 import android.content.Intent
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.webkit.WebChromeClient
@@ -11,8 +12,8 @@ import androidx.preference.PreferenceManager
 class AddActivity : AppCompatActivity() {
     private lateinit var webView: WebView
 
-    override fun onStart() {
-        super.onStart()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         webView = WebView(this)
         webView.apply {
@@ -29,6 +30,17 @@ class AddActivity : AppCompatActivity() {
         }
         setContentView(webView)
 
+        handleIntents()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+        handleIntents()
+    }
+
+    private fun handleIntents() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val espialServerUrl = sharedPreferences.getString("espial_server_url", "")
 
@@ -43,4 +55,5 @@ class AddActivity : AppCompatActivity() {
             }
         }
     }
+
 }
