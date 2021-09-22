@@ -67,23 +67,7 @@ class AddActivity : AppCompatActivity() {
     }
 
     private fun toEspialUrl(intent: Intent): String {
-        val extraText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
-        val extraSubject = intent.getStringExtra(Intent.EXTRA_SUBJECT) ?: ""
-
-        val fromChromeSelection = tryParseChromeSelection(extraText)
-        val addParams = if(fromChromeSelection != null) {
-            AddParams(
-                URLEncoder.encode(fromChromeSelection.first, "utf-8"),
-                "",
-                URLEncoder.encode(fromChromeSelection.second, "utf-8")
-            )
-        } else {
-            AddParams(
-                URLEncoder.encode(extraText, "utf-8"),
-                URLEncoder.encode(extraSubject, "utf-8"),
-                ""
-            )
-        }
+        val addParams = toAddParams(intent)
         return toEspialUrl(addParams)
     }
 
@@ -91,20 +75,42 @@ class AddActivity : AppCompatActivity() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val espialServerUrl = sharedPreferences.getString("espial_server_url", "") ?: ""
 
-        return "$espialServerUrl/add?_hasData&url=${addParams.Url}&title=${addParams.Title}&description=${addParams.Description}"
-    }
-
-    private fun tryParseChromeSelection(srcText: String): Pair<String, String>? {
-        val res = srcText.split('\n')
-        if(res.count() > 1) {
-            val potentialUrl = res.last().trim().takeWhile { it != '#' }
-            if(Patterns.WEB_URL.matcher(potentialUrl).matches()) {
-                val description = res.dropLast(1).joinToString("\n").removeSurrounding("\"")
-                return Pair(potentialUrl, description)
-            }
+        return when (addParams) {
+            is AddParams.Bookmark ->
+                "$espialServerUrl/add?url=${addParams.Url}&title=${addParams.Title}&description=${addParams.Description}&next=closeWindow"
+            is AddParams.Note ->
+                "$espialServerUrl/notes/add?title=${addParams.Title}&description=${addParams.Description}&next=closeWindow"
         }
-        return null
     }
 
-    class AddParams (val Url: String, val Title: String, val Description: String)
+    private fun toAddParams(intent: Intent): AddParams {
+        val extraText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+        val extraSubject = intent.getStringExtra(Intent.EXTRA_SUBJECT) ?: ""
+
+        val res = extraText.split('\n')
+        return if(res.count() > 1) {
+            val lastUrl = res.last().trim().takeWhile { it != '#' }
+            if(isUrl(lastUrl)) {
+                val description = res.dropLast(1).joinToString("\n").removeSurrounding("\"")
+                AddParams.Bookmark(enc(lastUrl), "", enc(description))
+            } else {
+                AddParams.Note(enc(extraSubject), enc(extraText))
+            }
+        } else if(isUrl(extraText)) {
+            AddParams.Bookmark(enc(extraText), enc(extraSubject), "")
+        } else {
+            AddParams.Note(enc(extraSubject), enc(extraText))
+        }
+    }
+
+    private fun enc(s: String) =
+            URLEncoder.encode(s, "utf-8")
+
+    private fun isUrl(potentialUrl: String): Boolean =
+            Patterns.WEB_URL.matcher(potentialUrl).matches()
+
+    sealed class AddParams {
+        data class Bookmark (val Url: String, val Title: String, val Description: String) : AddParams()
+        data class Note (val Title: String, val Description: String) : AddParams()
+    }
 }
