@@ -60,7 +60,7 @@ class ReadLaterActivity : Activity() {
             Intent.ACTION_SEND -> {
                 if ("text/plain" == intent.type) {
                     val addParams = EspialCore().toAddParams(intent)
-                    val postData = toPostData(addParams)
+                    val postData = toPostData(addParams, sharedPreferences.getBoolean("espial_readlater_marktoread", true))
                     if (postData == null) {
                         finish()
                         return
@@ -89,14 +89,14 @@ class ReadLaterActivity : Activity() {
         return requestBuilder.build()
     }
 
-    private fun toPostData(addParams: EspialCore.AddParams): JSONObject? {
+    private fun toPostData(addParams: EspialCore.AddParams, toRead: Boolean): JSONObject? {
         when (addParams) {
             is EspialCore.AddParams.Bookmark -> {
                 val postData = JSONObject()
                 postData.put("url", addParams.Url)
                 postData.put("title", addParams.Title)
                 postData.put("description", addParams.Description)
-                postData.put("toread", true)
+                postData.put("toread", toRead)
                 return postData
             }
             is EspialCore.AddParams.Note -> {
