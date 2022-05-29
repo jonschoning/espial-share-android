@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">Espial Share</string>
-    <!-- Settings Activity Title -->
     <string name="title_activity_settings">SettingsActivity</string>
-
-    <!-- Preference Titles -->
     <string name="config_header">Config</string>
-
-    <!-- Config Preferences -->
-    <string name="espial_server_url">https://esp.ae8.org</string>
+    <string name="share_menu_add">Add</string>
+    <string name="share_menu_read_later">Read Later</string>
+    <string name="no_server_url">Espial Share: Server Url not set</string>
+    <string name="no_api_key">Espial Share: API Key not set</string>
 </resources>

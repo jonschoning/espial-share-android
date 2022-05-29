@@ -4,8 +4,14 @@
 
         <EditTextPreference
             app:key="espial_server_url"
-            app:defaultValue="@string/espial_server_url"
+            app:defaultValue=""
             app:title="Espial Server Url"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="espial_api_key"
+            app:defaultValue=""
+            app:title="ApiKey"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
