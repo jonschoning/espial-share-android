@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/es_logo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.EspialShare">
+        android:theme="@style/Theme.EspialShare"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".AddActivity"
             android:exported="true"
