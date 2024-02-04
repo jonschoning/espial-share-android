@@ -11,7 +11,7 @@ android {
         minSdk 27
         targetSdk 34
         versionCode 1
-        versionName '0.0.6'
+        versionName '0.0.7'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,12 +36,12 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.gms:play-services-cronet:18.0.1'
 
-    def lifecycle_version = '2.6.2'
+    def lifecycle_version = '2.7.0'
     //noinspection KtxExtensionAvailable
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
