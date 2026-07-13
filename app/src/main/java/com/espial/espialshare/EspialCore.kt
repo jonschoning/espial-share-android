@@ -13,9 +13,9 @@ class EspialCore {
     private fun toEspialGetUrl(espialServerUrl: String, addParams: AddParams): String {
         return when (addParams) {
             is AddParams.Bookmark ->
-                "$espialServerUrl/add?url=${enc(addParams.Url)}&title=${enc(addParams.Title)}&description=${enc(addParams.Description)}&next=closeWindow"
+                "$espialServerUrl/add?url=${enc(addParams.url)}&title=${enc(addParams.title)}&description=${enc(addParams.description)}&next=closeWindow"
             is AddParams.Note ->
-                "$espialServerUrl/notes/add?title=${enc(addParams.Title)}&description=${enc(addParams.Description)}&next=closeWindow"
+                "$espialServerUrl/notes/add?title=${enc(addParams.title)}&description=${enc(addParams.description)}&next=closeWindow"
         }
     }
 
@@ -65,8 +65,8 @@ class EspialCore {
         Patterns.WEB_URL.matcher(potentialUrl).matches()
 
     sealed class AddParams {
-        data class Bookmark (val Url: String, val Title: String, val Description: String) : AddParams()
-        data class Note (val Title: String, val Description: String) : AddParams()
+        data class Bookmark (val url: String, val title: String, val description: String) : AddParams()
+        data class Note (val title: String, val description: String) : AddParams()
     }
 
 }

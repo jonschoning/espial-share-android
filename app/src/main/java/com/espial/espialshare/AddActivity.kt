@@ -59,7 +59,7 @@ class AddActivity : AppCompatActivity() {
     private fun handleIntents() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val espialServerUrl = sharedPreferences.getString("espial_server_url", "")
-        if (espialServerUrl == null || espialServerUrl.isEmpty()) {
+        if (espialServerUrl.isNullOrEmpty()) {
             Toast.makeText(this, R.string.no_server_url, Toast.LENGTH_LONG).show()
             return
         }
