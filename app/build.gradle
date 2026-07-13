@@ -1,48 +1,66 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
 }
 
+def versionMajor = 0
+def versionMinor = 0
+def versionPatch = 8
+
 android {
-    compileSdk 34
+    compileSdk 37
 
     defaultConfig {
         applicationId "com.espial.espialshare"
         minSdk 27
-        targetSdk 34
-        versionCode 1
-        versionName '0.0.7'
+        targetSdk 37
+        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
+        versionName "$versionMajor.$versionMinor.$versionPatch"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("../espialshare-release.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS") ?: "espialshare"
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-    namespace 'com.espial.espialshare'
+    namespace = 'com.espial.espialshare'
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.core:core-ktx:1.19.0'
+    implementation 'androidx.activity:activity-ktx:1.13.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    // Pinned: 18.1.1+ pulls split cronet-api/cronet-shared artifacts with a namespace collision
+    //noinspection GradleDependency
     implementation 'com.google.android.gms:play-services-cronet:18.0.1'
 
-    def lifecycle_version = '2.7.0'
+    def lifecycle_version = '2.11.0'
     //noinspection KtxExtensionAvailable
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 }

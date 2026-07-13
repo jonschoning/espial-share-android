@@ -6,8 +6,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.webkit.*
+import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
 
 class AddActivity : AppCompatActivity() {
@@ -16,6 +20,7 @@ class AddActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         webView = WebView(this)
         webView.apply {
@@ -44,12 +49,19 @@ class AddActivity : AppCompatActivity() {
                 }
             }
         }
-        setContentView(webView)
+        val container = FrameLayout(this)
+        container.addView(webView)
+        setContentView(container)
+        ViewCompat.setOnApplyWindowInsetsListener(container) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         handleIntents()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
 
@@ -59,7 +71,7 @@ class AddActivity : AppCompatActivity() {
     private fun handleIntents() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val espialServerUrl = sharedPreferences.getString("espial_server_url", "")
-        if (espialServerUrl == null || espialServerUrl.isEmpty()) {
+        if (espialServerUrl.isNullOrEmpty()) {
             Toast.makeText(this, R.string.no_server_url, Toast.LENGTH_LONG).show()
             return
         }

@@ -18,7 +18,6 @@ import java.util.concurrent.Executors
 
 
 class ReadLaterActivity : Activity() {
-    private val TAG = "ReadLaterActivity"
     private lateinit var cronetEngine: CronetEngine
     private var executor: Executor = Executors.newSingleThreadExecutor()
     private lateinit var mainThreadHandler: Handler
@@ -46,12 +45,12 @@ class ReadLaterActivity : Activity() {
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val espialServerUrl = sharedPreferences.getString("espial_server_url", "")
-        if (espialServerUrl == null || espialServerUrl.isEmpty()) {
+        if (espialServerUrl.isNullOrEmpty()) {
             Toast.makeText(this, R.string.no_server_url, Toast.LENGTH_LONG).show()
             return
         }
         val espialApiKey = sharedPreferences.getString("espial_api_key", "")
-        if (espialApiKey == null || espialApiKey.isEmpty()) {
+        if (espialApiKey.isNullOrEmpty()) {
             Toast.makeText(this, R.string.no_api_key, Toast.LENGTH_LONG).show()
             return
         }
@@ -93,9 +92,9 @@ class ReadLaterActivity : Activity() {
         when (addParams) {
             is EspialCore.AddParams.Bookmark -> {
                 val postData = JSONObject()
-                postData.put("url", addParams.Url)
-                postData.put("title", addParams.Title)
-                postData.put("description", addParams.Description)
+                postData.put("url", addParams.url)
+                postData.put("title", addParams.title)
+                postData.put("description", addParams.description)
                 postData.put("toread", toRead)
                 return postData
             }
@@ -111,19 +110,19 @@ class ReadLaterActivity : Activity() {
     }
 
     class EspialAddRequestCallback(private val handler: Handler, private val cb: (String) -> Unit) : UrlRequest.Callback() {
-        private val TAG = "EspialAddRequestCallback"
+        private val tag = "EspialAddRequestCallback"
         override fun onSucceeded(request: UrlRequest?, info: UrlResponseInfo?) {
-            Log.i(TAG, "onSucceeded: ${info?.httpStatusCode}")
+            Log.i(tag, "onSucceeded: ${info?.httpStatusCode}")
             handler.post { cb("Espial Share: Created bookmark (read-later )") }
         }
 
         override fun onFailed( request: UrlRequest?, info: UrlResponseInfo?, error: CronetException? ) {
-            Log.i(TAG, "onFailed: ${info?.httpStatusCode.toString()}")
+            Log.i(tag, "onFailed: ${info?.httpStatusCode.toString()}")
             handler.post { cb("Espial Share: Error creating bookmark: ${info?.httpStatusCode}") }
         }
 
         override fun onResponseStarted(request: UrlRequest?, info: UrlResponseInfo?) {
-            Log.i(TAG, "onResponseStarted: ${info?.httpStatusCode.toString()}")
+            Log.i(tag, "onResponseStarted: ${info?.httpStatusCode.toString()}")
             handler.post {
                 if ((info?.httpStatusCode!! >= 200) && (info.httpStatusCode < 300)) {
                     if (info.httpStatusCode >= 204) {
@@ -140,12 +139,12 @@ class ReadLaterActivity : Activity() {
         }
 
         override fun onReadCompleted( request: UrlRequest?, info: UrlResponseInfo?, byteBuffer: ByteBuffer? ) {
-            Log.i(TAG, "onReadCompleted: ${info?.httpStatusCode.toString()}")
+            Log.i(tag, "onReadCompleted: ${info?.httpStatusCode.toString()}")
             handler.post { cb("") }
         }
 
         override fun onRedirectReceived( request: UrlRequest?, info: UrlResponseInfo?, newLocationUrl: String? ) {
-            Log.i(TAG, "onRedirectReceived: ${info?.httpStatusCode.toString()}")
+            Log.i(tag, "onRedirectReceived: ${info?.httpStatusCode.toString()}")
             handler.post { cb("Espial Share: Error creating bookmark: Unauthorized. Verify ApiKey") }
         }
     }
