@@ -2,6 +2,10 @@ plugins {
     id 'com.android.application'
 }
 
+def versionMajor = 0
+def versionMinor = 0
+def versionPatch = 8
+
 android {
     compileSdk 37
 
@@ -9,16 +13,26 @@ android {
         applicationId "com.espial.espialshare"
         minSdk 27
         targetSdk 37
-        versionCode 1
-        versionName '0.0.8'
+        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
+        versionName "$versionMajor.$versionMinor.$versionPatch"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../espialshare-release.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS") ?: "espialshare"
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
