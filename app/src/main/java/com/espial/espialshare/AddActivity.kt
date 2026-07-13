@@ -6,8 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.webkit.*
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
 
 class AddActivity : AppCompatActivity() {
@@ -44,7 +47,14 @@ class AddActivity : AppCompatActivity() {
                 }
             }
         }
-        setContentView(webView)
+        val container = FrameLayout(this)
+        container.addView(webView)
+        setContentView(container)
+        ViewCompat.setOnApplyWindowInsetsListener(container) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         handleIntents()
     }
