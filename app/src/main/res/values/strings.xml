@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Espial Share</string>
-    <string name="title_activity_settings">SettingsActivity</string>
     <string name="config_header">Config</string>
     <string name="share_menu_add">Add</string>
     <string name="share_menu_read_later">Read Later</string>
