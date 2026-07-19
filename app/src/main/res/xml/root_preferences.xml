@@ -14,6 +14,13 @@
             app:title="ApiKey"
             app:useSimpleSummaryProvider="true" />
 
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="espial_canonicalize_urls"
+            app:title="Canonicalize Urls"
+            app:summary="Resolve share links to their final URL and fetch a title before sending to the server"
+            app:useSimpleSummaryProvider="false" />
+
     </PreferenceCategory>
     <PreferenceCategory app:title="Read Later">
         <SwitchPreferenceCompat

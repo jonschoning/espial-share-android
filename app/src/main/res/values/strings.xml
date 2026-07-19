@@ -5,4 +5,5 @@
     <string name="share_menu_read_later">Read Later</string>
     <string name="no_server_url">Espial Share: Server Url not set</string>
     <string name="no_api_key">Espial Share: API Key not set</string>
+    <string name="canonicalizing_url">Resolving link…</string>
 </resources>
