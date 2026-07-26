@@ -58,14 +58,30 @@ class ReadLaterActivity : Activity() {
         when (intent?.action) {
             Intent.ACTION_SEND -> {
                 if ("text/plain" == intent.type) {
-                    val addParams = EspialCore().toAddParams(intent)
-                    val postData = toPostData(addParams, sharedPreferences.getBoolean("espial_readlater_marktoread", true))
-                    if (postData == null) {
-                        finish()
-                        return
+                    val markToRead = sharedPreferences.getBoolean("espial_readlater_marktoread", true)
+                    val canonicalizeUrls = sharedPreferences.getBoolean("espial_canonicalize_urls", true)
+                    val espialCore = EspialCore()
+                    val addParams = espialCore.toAddParams(intent)
+                    if (canonicalizeUrls && espialCore.hasSiteRule(addParams)) {
+                        Thread {
+                            val resolvedParams = espialCore.resolveAddParams(addParams, canonicalizeUrls)
+                            val postData = toPostData(resolvedParams, markToRead)
+                            runOnUiThread {
+                                if (postData == null) {
+                                    finish()
+                                } else {
+                                    toRequest(espialServerUrl, espialApiKey, postData).start()
+                                }
+                            }
+                        }.start()
+                    } else {
+                        val postData = toPostData(addParams, markToRead)
+                        if (postData == null) {
+                            finish()
+                        } else {
+                            toRequest(espialServerUrl, espialApiKey, postData).start()
+                        }
                     }
-                    toRequest(espialServerUrl, espialApiKey, postData)
-                        .start()
                 }
             }
         }

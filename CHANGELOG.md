@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.9 - 2026-07-25
+
+- add Canonicalize Urls feature & preference setting
+  - when enabled, resolves share links from Reddit into canonical urls and strips tracking querystring parameters
+
+
 ## 0.0.8 - 2026-07-13
 
 - Maintenance/Modernization updates
